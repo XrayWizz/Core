@@ -296,20 +296,25 @@ local function clearContentArea()
 end
 
 -- Function to create dropdown section header
-local function createSectionHeader(title)
+local function createSectionHeader(title, isDropdown)
     local headerContainer = Instance.new("Frame")
     headerContainer.Name = "SectionHeader"
     headerContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-    headerContainer.AutomaticSize = Enum.AutomaticSize.Y
+    headerContainer.BackgroundTransparency = 1
     
     local contentContainer = Instance.new("Frame")
     contentContainer.Name = "Content"
     contentContainer.Size = UDim2.new(1, 0, 0, 0)
     contentContainer.Position = UDim2.new(0, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-    contentContainer.BackgroundTransparency = 1
+    contentContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
+    contentContainer.BackgroundTransparency = 0
     contentContainer.ClipsDescendants = true
-    contentContainer.AutomaticSize = Enum.AutomaticSize.Y
     contentContainer.Parent = headerContainer
+    
+    local contentPadding = Instance.new("UIPadding")
+    contentPadding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    contentPadding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    contentPadding.Parent = contentContainer
     
     local contentLayout = Instance.new("UIListLayout")
     contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
@@ -337,39 +342,45 @@ local function createSectionHeader(title)
     headerText.TextXAlignment = Enum.TextXAlignment.Left
     headerText.Parent = headerContainer
     
-    -- Add dropdown arrow
-    local arrow = Instance.new("TextLabel")
-    arrow.Name = "Arrow"
-    arrow.Size = UDim2.new(0, 20, 0, 20)
-    arrow.Position = UDim2.new(1, -25, 0, 4)
-    arrow.BackgroundTransparency = 1
-    arrow.Text = "▼"
-    arrow.TextColor3 = CUSTOM.THEME.TEXT_SECONDARY
-    arrow.TextSize = 14
-    arrow.Font = CUSTOM.FONTS.TEXT
-    arrow.Parent = headerContainer
+    if isDropdown then
+        local arrow = Instance.new("TextLabel")
+        arrow.Name = "Arrow"
+        arrow.Size = UDim2.new(0, 20, 0, 20)
+        arrow.Position = UDim2.new(1, -25, 0, 4)
+        arrow.BackgroundTransparency = 1
+        arrow.Text = "▼"
+        arrow.TextColor3 = CUSTOM.THEME.TEXT_SECONDARY
+        arrow.TextSize = 14
+        arrow.Font = CUSTOM.FONTS.TEXT
+        arrow.Parent = headerContainer
     
-    -- Add click functionality
-    local isExpanded = true
-    headerContainer.InputBegan:Connect(function(input)
-        if input.UserInputType == Enum.UserInputType.MouseButton1 then
-            isExpanded = not isExpanded
-            
-            -- Rotate arrow
-            local rotation = isExpanded and 0 or -90
-            TweenService:Create(arrow, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
-                Rotation = rotation
-            }):Play()
-            
-            -- Animate content
-            local content = headerContainer.Content
-            local contentSize = contentLayout.AbsoluteContentSize.Y
-            
-            TweenService:Create(content, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
-                Size = UDim2.new(1, 0, 0, isExpanded and contentSize or 0)
-            }):Play()
-        end
-    end)
+        -- Add click functionality
+        local isExpanded = true
+        headerContainer.InputBegan:Connect(function(input)
+            if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                isExpanded = not isExpanded
+                
+                -- Rotate arrow
+                local rotation = isExpanded and 0 or -90
+                TweenService:Create(arrow, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
+                    Rotation = rotation
+                }):Play()
+                
+                -- Get the total height of all content
+                local totalHeight = 0
+                for _, child in ipairs(contentContainer:GetChildren()) do
+                    if child:IsA("GuiObject") and not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
+                        totalHeight = totalHeight + child.Size.Y.Offset + CUSTOM.LAYOUT.PADDING
+                    end
+                end
+                
+                -- Animate content container
+                TweenService:Create(contentContainer, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
+                    Size = UDim2.new(1, 0, 0, isExpanded and totalHeight or 0)
+                }):Play()
+            end
+        end)
+    end
     
     return headerContainer, contentContainer
 end
@@ -722,6 +733,7 @@ local function createDropdownSection(title, items, startY)
     container.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, startY)
     container.BackgroundColor3 = CUSTOM.THEME.BUTTON_NORMAL
     container.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
+    container.AutomaticSize = Enum.AutomaticSize.Y
     container.Parent = ContentArea
     
     local corner = Instance.new("UICorner")
@@ -741,23 +753,37 @@ local function createDropdownSection(title, items, startY)
     local itemsContainer = Instance.new("Frame")
     itemsContainer.Size = UDim2.new(1, 0, 0, 0)
     itemsContainer.Position = UDim2.new(0, 0, 1, 0)
-    itemsContainer.BackgroundTransparency = 1
+    itemsContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
+    itemsContainer.BackgroundTransparency = 0
     itemsContainer.ClipsDescendants = true
     itemsContainer.Parent = container
     
+    local itemsPadding = Instance.new("UIPadding")
+    itemsPadding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    itemsPadding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    itemsPadding.Parent = itemsContainer
+    
     local listLayout = Instance.new("UIListLayout")
     listLayout.SortOrder = Enum.SortOrder.LayoutOrder
+    listLayout.Padding = UDim.new(0, CUSTOM.LAYOUT.PADDING)
     listLayout.Parent = itemsContainer
+    
+    -- Update size when layout changes
+    listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
+        if isExpanded then
+            itemsContainer.Size = UDim2.new(1, 0, 0, listLayout.AbsoluteContentSize.Y)
+        end
+    end)
     
     local isExpanded = false
     local buttons = {}
     
     -- Create teleport buttons
     for i, island in ipairs(items) do
-        local button = createTeleportButton(island, (i-1) * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2))
+        local button = createTeleportButton(island, 0)
         button.Parent = itemsContainer
-        button.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-        button.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, (i-1) * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2))
+        button.Size = UDim2.new(1, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
+        button.LayoutOrder = i
         table.insert(buttons, button)
     end
     
@@ -766,12 +792,12 @@ local function createDropdownSection(title, items, startY)
         isExpanded = not isExpanded
         titleButton.Text = (isExpanded and "▼ " or "▶ ") .. title
         
-        local targetSize = isExpanded and 
-            UDim2.new(1, 0, 0, #items * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2)) or 
-            UDim2.new(1, 0, 0, 0)
+        -- Calculate total height including padding
+        local totalHeight = #items * (CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
         
-        TweenService:Create(itemsContainer, TweenInfo.new(0.3), {
-            Size = targetSize
+        -- Animate container
+        TweenService:Create(itemsContainer, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
+            Size = UDim2.new(1, 0, 0, isExpanded and totalHeight or 0)
         }):Play()
     end)
     
@@ -881,25 +907,25 @@ for _, item in ipairs(MENU_ITEMS) do
         
         -- Handle content for each section
         if item.name == "Teleport" then
-            local header = createSectionHeader("🗺️ Teleport Menu")
+            -- Create header without dropdown arrow
+            local header = createSectionHeader("🗺️ Teleport Menu", false)
             header.Parent = ContentArea
             
+            -- Add teleport toggle right after header
             local toggleContainer, disableTeleportFunc = createTeleportToggle()
             toggleContainer.Parent = ContentArea
             
-            local yOffset = CUSTOM.LAYOUT.BUTTON_HEIGHT * 2 + CUSTOM.LAYOUT.PADDING * 3
-            
-            -- Create dropdowns for each sea
-            local firstSeaSection, firstHeight = createDropdownSection("First Sea", ISLANDS["First Sea"], yOffset)
-            local secondSeaSection, secondHeight = createDropdownSection("Second Sea", ISLANDS["Second Sea"], yOffset + firstHeight + CUSTOM.LAYOUT.PADDING)
-            local thirdSeaSection, thirdHeight = createDropdownSection("Third Sea", ISLANDS["Third Sea"], yOffset + firstHeight + secondHeight + CUSTOM.LAYOUT.PADDING * 2)
+            -- Create dropdowns for each sea with proper spacing
+            local firstSeaSection, firstHeight = createDropdownSection("First Sea", ISLANDS["First Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
+            local secondSeaSection, secondHeight = createDropdownSection("Second Sea", ISLANDS["Second Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT * 2 + CUSTOM.LAYOUT.PADDING * 2)
+            local thirdSeaSection, thirdHeight = createDropdownSection("Third Sea", ISLANDS["Third Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT * 3 + CUSTOM.LAYOUT.PADDING * 3)
             
             firstSeaSection.Parent = ContentArea
             secondSeaSection.Parent = ContentArea
             thirdSeaSection.Parent = ContentArea
             
         elseif item.name == "Overview" then
-            local header, content = createSectionHeader("Player Info")
+            local header, content = createSectionHeader("Player Info", true)
             header.Parent = ContentArea
             
             local player = game.Players.LocalPlayer
@@ -914,7 +940,7 @@ for _, item in ipairs(MENU_ITEMS) do
             end
             
         elseif item.name == "Settings" then
-            local header, content = createSectionHeader("UI Settings")
+            local header, content = createSectionHeader("UI Settings", true)
             header.Parent = ContentArea
             
             createInfoLabel("GUI Size", 50)
