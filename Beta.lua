@@ -80,7 +80,13 @@ local CONFIG = {
     CORNER_RADIUS = CUSTOM.LAYOUT.CORNER_RADIUS,
     MENU_WIDTH = CUSTOM.LAYOUT.MENU_WIDTH,
     TITLE_HEIGHT = CUSTOM.LAYOUT.TITLE_HEIGHT,
-    SIZES = CUSTOM.SIZES
+    SIZES = CUSTOM.SIZES,
+    TELEPORT_SPEEDS = {
+        {name = "Slow", speed = 100},
+        {name = "Normal", speed = 350},
+        {name = "Fast", speed = 600},
+        {name = "Super Fast", speed = 1000}
+    }
 }
 
 -- Menu items with icons
@@ -120,6 +126,7 @@ local currentState = {
 -- Teleport state
 local isTeleportEnabled = false
 local currentDestination = nil
+local currentTeleportSpeed = 350 -- Default speed
 
 -- Create main frame
 local MainFrame = Instance.new("Frame")
@@ -662,7 +669,7 @@ local function createTeleportButton(island, posY)
             end
             
             -- Start smooth movement to destination
-            smoothMoveToDestination(player, island.cframe, 350)
+            smoothMoveToDestination(player, island.cframe, currentTeleportSpeed)
         end
     end)
     
@@ -752,7 +759,7 @@ local function createDropdownSection(title, items, startY)
     
     local itemsContainer = Instance.new("Frame")
     itemsContainer.Size = UDim2.new(1, 0, 0, 0)
-    itemsContainer.Position = UDim2.new(0, 0, 1, 0)
+    itemsContainer.Position = UDim2.new(0, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
     itemsContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
     itemsContainer.BackgroundTransparency = 0
     itemsContainer.ClipsDescendants = true
@@ -914,6 +921,51 @@ for _, item in ipairs(MENU_ITEMS) do
             -- Add teleport toggle right after header
             local toggleContainer, disableTeleportFunc = createTeleportToggle()
             toggleContainer.Parent = ContentArea
+            
+            -- Add speed selection dropdown
+            local speedHeader = createSectionHeader("🚀 Teleport Speed", true)
+            speedHeader.Parent = ContentArea
+            
+            local speedContainer = Instance.new("Frame")
+            speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, 0)
+            speedContainer.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
+            speedContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
+            speedContainer.BackgroundTransparency = 0
+            speedContainer.ClipsDescendants = true
+            speedContainer.Parent = speedHeader
+            
+            local speedLayout = Instance.new("UIListLayout")
+            speedLayout.SortOrder = Enum.SortOrder.LayoutOrder
+            speedLayout.Padding = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+            speedLayout.Parent = speedContainer
+            
+            -- Create speed buttons
+            for i, speedOption in ipairs(CONFIG.TELEPORT_SPEEDS) do
+                local button = Instance.new("TextButton")
+                button.Size = UDim2.new(1, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
+                button.BackgroundColor3 = speedOption.speed == currentTeleportSpeed and CUSTOM.THEME.ACCENT or CUSTOM.THEME.BUTTON_NORMAL
+                button.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
+                button.Text = speedOption.name
+                button.TextColor3 = CUSTOM.THEME.TEXT_PRIMARY
+                button.Font = CUSTOM.FONTS.BUTTON
+                button.LayoutOrder = i
+                button.Parent = speedContainer
+                
+                local corner = Instance.new("UICorner")
+                corner.CornerRadius = UDim.new(0, CUSTOM.LAYOUT.CORNER_RADIUS)
+                corner.Parent = button
+                
+                button.MouseButton1Click:Connect(function()
+                    currentTeleportSpeed = speedOption.speed
+                    
+                    -- Update button colors
+                    for _, child in ipairs(speedContainer:GetChildren()) do
+                        if child:IsA("TextButton") then
+                            child.BackgroundColor3 = speedOption.speed == currentTeleportSpeed and CUSTOM.THEME.ACCENT or CUSTOM.THEME.BUTTON_NORMAL
+                        end
+                    end
+                end)
+            end
             
             -- Create dropdowns for each sea with proper spacing
             local firstSeaSection, firstHeight = createDropdownSection("First Sea", ISLANDS["First Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
