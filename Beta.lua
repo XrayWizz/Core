@@ -7,25 +7,29 @@ local UserInputService = game:GetService("UserInputService")
 local CUSTOM = {
     THEME = {
         -- Main Colors
-        BACKGROUND = Color3.fromRGB(15, 15, 20),         -- Darker background
-        TITLE_BAR = Color3.fromRGB(20, 20, 25),         -- Slightly lighter than background
-        ACCENT = Color3.fromRGB(90, 120, 255),          -- Bright blue accent
+        BACKGROUND = Color3.fromRGB(25, 25, 30),         -- Dark background like the image
+        TITLE_BAR = Color3.fromRGB(30, 30, 35),         -- Slightly lighter than background
+        ACCENT = Color3.fromRGB(65, 105, 255),          -- Blue accent color
         
         -- Text Colors
         TEXT_PRIMARY = Color3.fromRGB(255, 255, 255),   -- Pure white
         TEXT_SECONDARY = Color3.fromRGB(180, 180, 180), -- Light gray
-        TEXT_ACCENT = Color3.fromRGB(90, 120, 255),     -- Matching accent
+        TEXT_ACCENT = Color3.fromRGB(65, 105, 255),     -- Matching accent
         
         -- Button Colors
-        BUTTON_NORMAL = Color3.fromRGB(40, 40, 45),     -- Button background
-        BUTTON_HOVER = Color3.fromRGB(50, 50, 55),      -- Button hover state
-        BUTTON_PRESS = Color3.fromRGB(30, 30, 35),      -- Button press state
+        BUTTON_NORMAL = Color3.fromRGB(35, 35, 40),     -- Darker button background
+        BUTTON_HOVER = Color3.fromRGB(45, 45, 50),      -- Button hover state
+        BUTTON_PRESS = Color3.fromRGB(25, 25, 30),      -- Button press state
         CLOSE_BUTTON = Color3.fromRGB(255, 70, 70),     -- Red close button
+        
+        -- Toggle Colors
+        TOGGLE_ON = Color3.fromRGB(65, 105, 255),       -- Blue when enabled
+        TOGGLE_OFF = Color3.fromRGB(60, 60, 65),        -- Dark gray when disabled
         
         -- Transparency
         BACKGROUND_TRANSPARENCY = 0,                     -- Solid background
         TITLE_BAR_TRANSPARENCY = 0,                     -- Solid title bar
-        BUTTON_TRANSPARENCY = 0.1,                      -- Slightly transparent buttons
+        BUTTON_TRANSPARENCY = 0,                        -- Solid buttons like in image
         BUTTON_HOVER_TRANSPARENCY = 0,                  -- Solid on hover
     },
     
@@ -45,18 +49,21 @@ local CUSTOM = {
     },
     
     LAYOUT = {
-        CORNER_RADIUS = 6,                              -- Smaller corners
-        TITLE_HEIGHT = 28,                              -- Smaller title bar
-        MENU_WIDTH = 140,                               -- Narrower menu
-        BUTTON_HEIGHT = 28,                             -- Smaller buttons
-        PADDING = 8,                                    -- Smaller padding
-        SCROLL_BAR_THICKNESS = 3,                       -- Thin scrollbar
+        CORNER_RADIUS = 4,                              -- Subtle corners like in image
+        TITLE_HEIGHT = 32,                              -- Taller title bar
+        MENU_WIDTH = 180,                               -- Wider menu like in image
+        BUTTON_HEIGHT = 32,                             -- Taller buttons
+        PADDING = 10,                                   -- More spacing
+        SCROLL_BAR_THICKNESS = 4,                       -- Slightly thicker scrollbar
+        TOGGLE_WIDTH = 40,                              -- Width of toggle switches
+        TOGGLE_HEIGHT = 20,                             -- Height of toggle switches
     },
     
     FONTS = {
-        TITLE = Enum.Font.GothamBold,                   -- Modern, bold font for title
-        TEXT = Enum.Font.Gotham,                        -- Clean, readable font for text
+        TITLE = Enum.Font.GothamBold,                   -- Bold font for title
+        TEXT = Enum.Font.Gotham,                        -- Clean font for text
         BUTTON = Enum.Font.GothamMedium,                -- Medium weight for buttons
+        CATEGORY = Enum.Font.GothamMedium,              -- Medium weight for categories
     },
     
     ANIMATION = {
@@ -69,50 +76,33 @@ local CUSTOM = {
 -- Constants (using customization)
 local CONFIG = {
     THEME = {
-        BACKGROUND = Color3.fromRGB(25, 25, 25),
-        SECONDARY_BG = Color3.fromRGB(35, 35, 35),
-        TITLE_BAR = Color3.fromRGB(20, 20, 20),
-        TEXT_PRIMARY = Color3.fromRGB(240, 240, 240),
-        TEXT_SECONDARY = Color3.fromRGB(180, 180, 180),
-        ACCENT = Color3.fromRGB(65, 105, 225),
-        BUTTON_NORMAL = Color3.fromRGB(45, 45, 45),
-        BUTTON_HOVER = Color3.fromRGB(55, 55, 55),
-        CLOSE_BUTTON = Color3.fromRGB(220, 50, 50),
-        TOGGLE_ON = Color3.fromRGB(65, 105, 225),
-        TOGGLE_OFF = Color3.fromRGB(80, 80, 80)
+        BACKGROUND = CUSTOM.THEME.BACKGROUND,
+        TITLE_BAR = CUSTOM.THEME.TITLE_BAR,
+        TEXT = CUSTOM.THEME.TEXT_PRIMARY,
+        TEXT_SECONDARY = CUSTOM.THEME.TEXT_SECONDARY,
+        ACCENT = CUSTOM.THEME.ACCENT,
+        CLOSE_BUTTON = CUSTOM.THEME.CLOSE_BUTTON,
+        TEXT_PRIMARY = CUSTOM.THEME.TEXT_PRIMARY
     },
-    CORNER_RADIUS = 4,
-    MENU_WIDTH = 300,
-    TITLE_HEIGHT = 32,
-    BUTTON_HEIGHT = 36,
-    PADDING = 8,
-    FONT_SIZE = 14,
-    ANIMATION = {
-        TWEEN_SPEED = 0.2
-    },
-    TELEPORT_SPEEDS = {
-        {name = "Slow", speed = 100},
-        {name = "Normal", speed = 350},
-        {name = "Fast", speed = 600},
-        {name = "Super Fast", speed = 1000}
-    }
+    CORNER_RADIUS = CUSTOM.LAYOUT.CORNER_RADIUS,
+    MENU_WIDTH = CUSTOM.LAYOUT.MENU_WIDTH,
+    TITLE_HEIGHT = CUSTOM.LAYOUT.TITLE_HEIGHT,
+    SIZES = CUSTOM.SIZES
 }
 
 -- Menu items with icons
 local MENU_ITEMS = {
-    {layoutOrder = 1, name = "Overview", icon = "👤"},     -- Profile
-    {layoutOrder = 2, name = "Farming", icon = "🏰"},      -- Castle
-    {layoutOrder = 3, name = "Sea Events", icon = "🌊"},   -- Wave
+    {layoutOrder = 1, name = "Discord", icon = "🔗"},      -- Discord link
+    {layoutOrder = 2, name = "Farm", icon = "🌾"},        -- Farm icon
+    {layoutOrder = 3, name = "Sea", icon = "🌊"},         -- Sea/Wave
     {layoutOrder = 4, name = "Islands", icon = "🏝️"},     -- Island
-    {layoutOrder = 5, name = "Quests/Raids", icon = "⚔️"}, -- Crossed swords
-    {layoutOrder = 6, name = "Fruit", icon = "🍒"},        -- Cherry
-    {layoutOrder = 7, name = "Teleport", icon = "⚡"},     -- Lightning
-    {layoutOrder = 8, name = "Status", icon = "📜"},       -- Scroll
-    {layoutOrder = 9, name = "Visual", icon = "👁️"},       -- Eye
-    {layoutOrder = 10, name = "Shop", icon = "🛒"},        -- Shopping cart
-    {layoutOrder = 11, name = "Misc.", icon = "🔩"},       -- Nut and bolt
-    {layoutOrder = 12, name = "Settings", icon = "⚙️"},    -- Gear
-    {layoutOrder = 13, name = "Feedback", icon = "💬"}     -- Speech bubble
+    {layoutOrder = 5, name = "Quests/Items", icon = "📜"}, -- Quests
+    {layoutOrder = 6, name = "Fruit/Raid", icon = "🍎"}, -- Fruit
+    {layoutOrder = 7, name = "Teleport", icon = "⭐"},   -- Star
+    {layoutOrder = 8, name = "Status", icon = "📊"},     -- Status
+    {layoutOrder = 9, name = "Visual", icon = "👁️"},     -- Eye
+    {layoutOrder = 10, name = "Shop", icon = "🛍️"},      -- Shop
+    {layoutOrder = 11, name = "Misc", icon = "⚙️"}      -- Settings
 }
 
 -- Create ScreenGui
@@ -135,7 +125,6 @@ local currentState = {
 -- Teleport state
 local isTeleportEnabled = false
 local currentDestination = nil
-local currentTeleportSpeed = 350 -- Default speed
 
 -- Create main frame
 local MainFrame = Instance.new("Frame")
@@ -147,15 +136,8 @@ MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
 
--- Add corner rounding and stroke
+-- Add corner rounding
 local Corner = Instance.new("UICorner")
-Corner.CornerRadius = UDim.new(0, CONFIG.CORNER_RADIUS)
-Corner.Parent = MainFrame
-
-local Stroke = Instance.new("UIStroke")
-Stroke.Color = Color3.fromRGB(50, 50, 50)
-Stroke.Thickness = 1
-Stroke.Parent = MainFrame
 Corner.CornerRadius = UDim.new(0, CONFIG.CORNER_RADIUS)
 Corner.Parent = MainFrame
 
@@ -176,13 +158,9 @@ TitleCorner.Parent = TitleBar
 local TitleText = Instance.new("TextLabel")
 TitleText.Name = "TitleText"
 TitleText.Size = UDim2.new(0, 60, 1, 0)
-TitleText.Position = UDim2.new(0, CONFIG.PADDING, 0, 0)
+TitleText.Position = UDim2.new(0, 10, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "redz Hub"
-TitleText.TextColor3 = CONFIG.THEME.TEXT_PRIMARY
-TitleText.Font = Enum.Font.GothamBold
-TitleText.TextSize = CONFIG.FONT_SIZE
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Text = "Core"
 TitleText.TextColor3 = CONFIG.THEME.TEXT_PRIMARY
 TitleText.TextSize = 16
 TitleText.Font = CUSTOM.FONTS.TITLE
@@ -264,7 +242,7 @@ CloseButton.Name = "CloseButton"
 CloseButton.Size = UDim2.new(0, CUSTOM.LAYOUT.BUTTON_HEIGHT, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
 CloseButton.Position = UDim2.new(1, -CUSTOM.LAYOUT.BUTTON_HEIGHT, 0, 0)
 CloseButton.BackgroundTransparency = 1
-CloseButton.Text = "X"
+CloseButton.Text = "×"
 CloseButton.TextColor3 = CONFIG.THEME.CLOSE_BUTTON
 CloseButton.TextSize = 20
 CloseButton.Font = CUSTOM.FONTS.BUTTON
@@ -322,31 +300,83 @@ local function clearContentArea()
     end
 end
 
--- Function to create dropdown section header
-local function createSectionHeader(title, isDropdown)
+-- Function to create a modern toggle switch
+local function createToggleSwitch(text, yPos, defaultState)
+    -- Create container
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
+    container.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, yPos)
+    container.BackgroundTransparency = 1
+    container.Parent = ContentArea
+
+    -- Create label
+    local label = Instance.new("TextLabel")
+    label.Size = UDim2.new(1, -(CUSTOM.LAYOUT.TOGGLE_WIDTH + 10), 1, 0)
+    label.Position = UDim2.new(0, 0, 0, 0)
+    label.BackgroundTransparency = 1
+    label.Text = text
+    label.TextColor3 = CUSTOM.THEME.TEXT_PRIMARY
+    label.TextXAlignment = Enum.TextXAlignment.Left
+    label.Font = CUSTOM.FONTS.TEXT
+    label.TextSize = 14
+    label.Parent = container
+
+    -- Create toggle background
+    local toggleBg = Instance.new("Frame")
+    toggleBg.Size = UDim2.new(0, CUSTOM.LAYOUT.TOGGLE_WIDTH, 0, CUSTOM.LAYOUT.TOGGLE_HEIGHT)
+    toggleBg.Position = UDim2.new(1, -CUSTOM.LAYOUT.TOGGLE_WIDTH, 0.5, -CUSTOM.LAYOUT.TOGGLE_HEIGHT/2)
+    toggleBg.BackgroundColor3 = defaultState and CUSTOM.THEME.TOGGLE_ON or CUSTOM.THEME.TOGGLE_OFF
+    toggleBg.Parent = container
+
+    -- Add corner rounding to background
+    local bgCorner = Instance.new("UICorner")
+    bgCorner.CornerRadius = UDim.new(0, CUSTOM.LAYOUT.TOGGLE_HEIGHT/2)
+    bgCorner.Parent = toggleBg
+
+    -- Create toggle knob
+    local knob = Instance.new("Frame")
+    local knobSize = CUSTOM.LAYOUT.TOGGLE_HEIGHT - 4
+    knob.Size = UDim2.new(0, knobSize, 0, knobSize)
+    knob.Position = UDim2.new(defaultState and 1 or 0, defaultState and -knobSize-2 or 2, 0.5, -knobSize/2)
+    knob.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    knob.Parent = toggleBg
+
+    -- Add corner rounding to knob
+    local knobCorner = Instance.new("UICorner")
+    knobCorner.CornerRadius = UDim.new(1, 0)
+    knobCorner.Parent = knob
+
+    -- Create click detector
+    local button = Instance.new("TextButton")
+    button.Size = UDim2.new(1, 0, 1, 0)
+    button.BackgroundTransparency = 1
+    button.Text = ""
+    button.Parent = container
+
+    -- Handle toggle state
+    local isEnabled = defaultState
+    button.MouseButton1Click:Connect(function()
+        isEnabled = not isEnabled
+        
+        -- Animate background color
+        TweenService:Create(toggleBg, TweenInfo.new(0.2), {
+            BackgroundColor3 = isEnabled and CUSTOM.THEME.TOGGLE_ON or CUSTOM.THEME.TOGGLE_OFF
+        }):Play()
+
+        -- Animate knob position
+        TweenService:Create(knob, TweenInfo.new(0.2), {
+            Position = UDim2.new(isEnabled and 1 or 0, isEnabled and -knobSize-2 or 2, 0.5, -knobSize/2)
+        }):Play()
+    end)
+
+    return container, isEnabled
+end
+
+-- Function to create section header
+local function createSectionHeader(title)
     local headerContainer = Instance.new("Frame")
     headerContainer.Name = "SectionHeader"
     headerContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-    headerContainer.BackgroundTransparency = 1
-    
-    local contentContainer = Instance.new("Frame")
-    contentContainer.Name = "Content"
-    contentContainer.Size = UDim2.new(1, 0, 0, 0)
-    contentContainer.Position = UDim2.new(0, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-    contentContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
-    contentContainer.BackgroundTransparency = 0
-    contentContainer.ClipsDescendants = true
-    contentContainer.Parent = headerContainer
-    
-    local contentPadding = Instance.new("UIPadding")
-    contentPadding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    contentPadding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    contentPadding.Parent = contentContainer
-    
-    local contentLayout = Instance.new("UIListLayout")
-    contentLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    contentLayout.Padding = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    contentLayout.Parent = contentContainer
     headerContainer.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.PADDING)
     headerContainer.BackgroundColor3 = CUSTOM.THEME.BUTTON_NORMAL
     headerContainer.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
@@ -369,59 +399,19 @@ local function createSectionHeader(title, isDropdown)
     headerText.TextXAlignment = Enum.TextXAlignment.Left
     headerText.Parent = headerContainer
     
-    if isDropdown then
-        local arrow = Instance.new("TextLabel")
-        arrow.Name = "Arrow"
-        arrow.Size = UDim2.new(0, 20, 0, 20)
-        arrow.Position = UDim2.new(1, -25, 0, 4)
-        arrow.BackgroundTransparency = 1
-        arrow.Text = "▼"
-        arrow.TextColor3 = CUSTOM.THEME.TEXT_SECONDARY
-        arrow.TextSize = 14
-        arrow.Font = CUSTOM.FONTS.TEXT
-        arrow.Parent = headerContainer
-    
-        -- Add click functionality
-        local isExpanded = true
-        headerContainer.InputBegan:Connect(function(input)
-            if input.UserInputType == Enum.UserInputType.MouseButton1 then
-                isExpanded = not isExpanded
-                
-                -- Rotate arrow
-                local rotation = isExpanded and 0 or -90
-                TweenService:Create(arrow, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
-                    Rotation = rotation
-                }):Play()
-                
-                -- Get the total height of all content
-                local totalHeight = 0
-                for _, child in ipairs(contentContainer:GetChildren()) do
-                    if child:IsA("GuiObject") and not child:IsA("UIListLayout") and not child:IsA("UIPadding") then
-                        totalHeight = totalHeight + child.Size.Y.Offset + CUSTOM.LAYOUT.PADDING
-                    end
-                end
-                
-                -- Animate content container
-                TweenService:Create(contentContainer, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
-                    Size = UDim2.new(1, 0, 0, isExpanded and totalHeight or 0)
-                }):Play()
-            end
-        end)
-    end
-    
-    return headerContainer, contentContainer
+    return headerContainer
 end
 
 -- Function to create info label
 local function createInfoLabel(text, posY)
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -CONFIG.PADDING*2, 0, CONFIG.BUTTON_HEIGHT)
-    label.Position = UDim2.new(0, CONFIG.PADDING, 0, posY)
+    label.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
+    label.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, posY)
     label.BackgroundTransparency = 1
     label.Text = text
-    label.TextColor3 = CONFIG.THEME.TEXT_SECONDARY
-    label.TextSize = CONFIG.FONT_SIZE
-    label.Font = Enum.Font.GothamMedium
+    label.TextColor3 = CUSTOM.THEME.TEXT_SECONDARY
+    label.TextSize = 14
+    label.Font = CUSTOM.FONTS.TEXT
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = ContentArea
     return label
@@ -689,7 +679,7 @@ local function createTeleportButton(island, posY)
             end
             
             -- Start smooth movement to destination
-            smoothMoveToDestination(player, island.cframe, currentTeleportSpeed)
+            smoothMoveToDestination(player, island.cframe, 350)
         end
     end)
     
@@ -778,46 +768,24 @@ local function createDropdownSection(title, items, startY)
     
     local itemsContainer = Instance.new("Frame")
     itemsContainer.Size = UDim2.new(1, 0, 0, 0)
-    itemsContainer.Position = UDim2.new(0, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-    itemsContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
-    itemsContainer.BackgroundTransparency = 0
+    itemsContainer.Position = UDim2.new(0, 0, 1, 0)
+    itemsContainer.BackgroundTransparency = 1
     itemsContainer.ClipsDescendants = true
     itemsContainer.Parent = container
     
-    -- Add padding to items container
-    local padding = Instance.new("UIPadding")
-    padding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    padding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    padding.PaddingTop = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    padding.PaddingBottom = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    padding.Parent = itemsContainer
-    
-    local itemsPadding = Instance.new("UIPadding")
-    itemsPadding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    itemsPadding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-    itemsPadding.Parent = itemsContainer
-    
     local listLayout = Instance.new("UIListLayout")
     listLayout.SortOrder = Enum.SortOrder.LayoutOrder
-    listLayout.Padding = UDim.new(0, CUSTOM.LAYOUT.PADDING)
     listLayout.Parent = itemsContainer
-    
-    -- Update size when layout changes
-    listLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
-        if isExpanded then
-            itemsContainer.Size = UDim2.new(1, 0, 0, listLayout.AbsoluteContentSize.Y)
-        end
-    end)
     
     local isExpanded = false
     local buttons = {}
     
     -- Create teleport buttons
     for i, island in ipairs(items) do
-        local button = createTeleportButton(island, 0)
+        local button = createTeleportButton(island, (i-1) * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2))
         button.Parent = itemsContainer
-        button.Size = UDim2.new(1, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-        button.LayoutOrder = i
+        button.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
+        button.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, (i-1) * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2))
         table.insert(buttons, button)
     end
     
@@ -826,19 +794,16 @@ local function createDropdownSection(title, items, startY)
         isExpanded = not isExpanded
         titleButton.Text = (isExpanded and "▼ " or "▶ ") .. title
         
-        -- Calculate total height including padding
-        local totalHeight = listLayout.AbsoluteContentSize.Y
+        local targetSize = isExpanded and 
+            UDim2.new(1, 0, 0, #items * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2)) or 
+            UDim2.new(1, 0, 0, 0)
         
-        -- Animate container
-        TweenService:Create(itemsContainer, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
-            Size = UDim2.new(1, 0, 0, isExpanded and totalHeight or 0)
+        TweenService:Create(itemsContainer, TweenInfo.new(0.3), {
+            Size = targetSize
         }):Play()
-        
-        -- Update parent container size
-        container.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isExpanded and totalHeight or 0))
     end)
     
-    return container
+    return container, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isExpanded and #items * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2) or 0)
 end
 
 -- Create menu buttons
@@ -944,130 +909,34 @@ for _, item in ipairs(MENU_ITEMS) do
         
         -- Handle content for each section
         if item.name == "Teleport" then
-            -- Create header without dropdown arrow
-            local header = createSectionHeader("🗺️ Teleport Menu", false)
+            local header = createSectionHeader("🗺️ Teleport Menu")
             header.Parent = ContentArea
             
-            -- Add teleport toggle right after header
             local toggleContainer, disableTeleportFunc = createTeleportToggle()
             toggleContainer.Parent = ContentArea
             
-            -- Add speed selection dropdown
-            local speedContainer = Instance.new("Frame")
-            speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-            speedContainer.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT * 2)
-            speedContainer.BackgroundColor3 = CUSTOM.THEME.BUTTON_NORMAL
-            speedContainer.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
-            speedContainer.Parent = ContentArea
+            local yOffset = CUSTOM.LAYOUT.BUTTON_HEIGHT * 2 + CUSTOM.LAYOUT.PADDING * 3
             
-            local corner = Instance.new("UICorner")
-            corner.CornerRadius = UDim.new(0, CUSTOM.LAYOUT.CORNER_RADIUS)
-            corner.Parent = speedContainer
-            
-            local speedButton = Instance.new("TextButton")
-            speedButton.Size = UDim2.new(1, 0, 1, 0)
-            speedButton.BackgroundTransparency = 1
-            speedButton.Text = "▶ Teleport Speed"
-            speedButton.TextColor3 = CUSTOM.THEME.TEXT_PRIMARY
-            speedButton.TextSize = 14
-            speedButton.Font = CUSTOM.FONTS.BUTTON
-            speedButton.TextXAlignment = Enum.TextXAlignment.Left
-            speedButton.Parent = speedContainer
-            
-            local speedItemsContainer = Instance.new("Frame")
-            speedItemsContainer.Size = UDim2.new(1, 0, 0, 0)
-            speedItemsContainer.Position = UDim2.new(0, 0, 1, 0)
-            speedItemsContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
-            speedItemsContainer.BackgroundTransparency = 0
-            speedItemsContainer.ClipsDescendants = true
-            speedItemsContainer.Parent = speedContainer
-            
-            local speedLayout = Instance.new("UIListLayout")
-            speedLayout.SortOrder = Enum.SortOrder.LayoutOrder
-            speedLayout.Padding = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-            speedLayout.Parent = speedItemsContainer
-            
-            local speedPadding = Instance.new("UIPadding")
-            speedPadding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-            speedPadding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-            speedPadding.PaddingTop = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-            speedPadding.PaddingBottom = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-            speedPadding.Parent = speedItemsContainer
-            
-            -- Create speed buttons
-            for i, speedOption in ipairs(CONFIG.TELEPORT_SPEEDS) do
-                local button = Instance.new("TextButton")
-                button.Size = UDim2.new(1, 0, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-                button.BackgroundColor3 = speedOption.speed == currentTeleportSpeed and CUSTOM.THEME.ACCENT or CUSTOM.THEME.BUTTON_NORMAL
-                button.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
-                button.Text = speedOption.name
-                button.TextColor3 = CUSTOM.THEME.TEXT_PRIMARY
-                button.Font = CUSTOM.FONTS.BUTTON
-                button.LayoutOrder = i
-                button.Parent = speedItemsContainer
-                
-                local corner = Instance.new("UICorner")
-                corner.CornerRadius = UDim.new(0, CUSTOM.LAYOUT.CORNER_RADIUS)
-                corner.Parent = button
-                
-                button.MouseButton1Click:Connect(function()
-                    currentTeleportSpeed = speedOption.speed
-                    speedButton.Text = "▼ " .. speedOption.name
-                    
-                    -- Update button colors
-                    for _, child in ipairs(speedItemsContainer:GetChildren()) do
-                        if child:IsA("TextButton") then
-                            child.BackgroundColor3 = speedOption.speed == currentTeleportSpeed and CUSTOM.THEME.ACCENT or CUSTOM.THEME.BUTTON_NORMAL
-                        end
-                    end
-                end)
-            end
-            
-            -- Toggle speed dropdown
-            local isSpeedExpanded = false
-            speedButton.MouseButton1Click:Connect(function()
-                isSpeedExpanded = not isSpeedExpanded
-                speedButton.Text = (isSpeedExpanded and "▼ " or "▶ ") .. "Teleport Speed"
-                
-                -- Calculate total height including padding
-                local totalHeight = speedLayout.AbsoluteContentSize.Y
-                
-                -- Animate container
-                TweenService:Create(speedItemsContainer, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
-                    Size = UDim2.new(1, 0, 0, isSpeedExpanded and totalHeight or 0)
-                }):Play()
-                
-                -- Update parent container size
-                speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isSpeedExpanded and totalHeight or 0))
-            end)
-            
-            -- Create dropdowns for each sea with proper spacing
-            local startY = CUSTOM.LAYOUT.BUTTON_HEIGHT * 3 + CUSTOM.LAYOUT.PADDING
-            local firstSeaSection = createDropdownSection("First Sea", ISLANDS["First Sea"], startY)
-            local secondSeaSection = createDropdownSection("Second Sea", ISLANDS["Second Sea"], startY + CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
-            local thirdSeaSection = createDropdownSection("Third Sea", ISLANDS["Third Sea"], startY + (CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING) * 2)
+            -- Create dropdowns for each sea
+            local firstSeaSection, firstHeight = createDropdownSection("First Sea", ISLANDS["First Sea"], yOffset)
+            local secondSeaSection, secondHeight = createDropdownSection("Second Sea", ISLANDS["Second Sea"], yOffset + firstHeight + CUSTOM.LAYOUT.PADDING)
+            local thirdSeaSection, thirdHeight = createDropdownSection("Third Sea", ISLANDS["Third Sea"], yOffset + firstHeight + secondHeight + CUSTOM.LAYOUT.PADDING * 2)
             
             firstSeaSection.Parent = ContentArea
             secondSeaSection.Parent = ContentArea
             thirdSeaSection.Parent = ContentArea
             
         elseif item.name == "Overview" then
-            local header, content = createSectionHeader("Player Info", true)
+            local header = createSectionHeader("Player Info")
             header.Parent = ContentArea
             
             local player = game.Players.LocalPlayer
-            local labels = {
-                createInfoLabel("Username: " .. player.Name, 0),
-                createInfoLabel("Display Name: " .. player.DisplayName, 0),
-                createInfoLabel("Account Age: " .. player.AccountAge .. " days", 0)
-            }
-            
-            for _, label in ipairs(labels) do
-                label.Parent = content
-            end
+            createInfoLabel("Username: " .. player.Name, 50)
+            createInfoLabel("Display Name: " .. player.DisplayName, 90)
+            createInfoLabel("Account Age: " .. player.AccountAge .. " days", 130)
             
         elseif item.name == "Settings" then
-            local header, content = createSectionHeader("UI Settings", true)
+            local header = createSectionHeader("UI Settings")
             header.Parent = ContentArea
             
             createInfoLabel("GUI Size", 50)
@@ -1098,8 +967,28 @@ for _, item in ipairs(MENU_ITEMS) do
             visualHeader.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, sizeY + 20)
             visualHeader.Parent = ContentArea
             
-            createToggle("Enable Animations", sizeY + 70, true)
-            createToggle("Show Tooltips", sizeY + 110, true)
+            -- Farm settings
+            local farmHeader, farmContent = createSectionHeader("Farm", true)
+            farmHeader.Parent = ContentArea
+            
+            createToggleSwitch("Auto Farm Level", 50, false)
+            createToggleSwitch("Auto Farm Nearest", 90, false)
+            
+            -- Sea settings
+            local seaHeader, seaContent = createSectionHeader("Sea Events", true)
+            seaHeader.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, 140)
+            seaHeader.Parent = ContentArea
+            
+            createToggleSwitch("Auto Pirates Sea", 190, false)
+            
+            -- Bones settings
+            local bonesHeader, bonesContent = createSectionHeader("Bones", true)
+            bonesHeader.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, 240)
+            bonesHeader.Parent = ContentArea
+            
+            createToggleSwitch("Auto Farm Bones", 290, false)
+            createToggleSwitch("Auto Kill Soul Reaper", 330, false)
+            createToggleSwitch("Auto Trade Bones", 370, false)
             
         else
             local header = createSectionHeader(item.name)
