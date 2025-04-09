@@ -1020,7 +1020,6 @@ for _, item in ipairs(MENU_ITEMS) do
                 -- Update parent container size
                 speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isSpeedExpanded and totalHeight or 0))
             end)
-            end
             
             -- Create dropdowns for each sea with proper spacing
             local firstSeaSection, firstHeight = createDropdownSection("First Sea", ISLANDS["First Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
