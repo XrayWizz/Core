@@ -69,18 +69,27 @@ local CUSTOM = {
 -- Constants (using customization)
 local CONFIG = {
     THEME = {
-        BACKGROUND = CUSTOM.THEME.BACKGROUND,
-        TITLE_BAR = CUSTOM.THEME.TITLE_BAR,
-        TEXT = CUSTOM.THEME.TEXT_PRIMARY,
-        TEXT_SECONDARY = CUSTOM.THEME.TEXT_SECONDARY,
-        ACCENT = CUSTOM.THEME.ACCENT,
-        CLOSE_BUTTON = CUSTOM.THEME.CLOSE_BUTTON,
-        TEXT_PRIMARY = CUSTOM.THEME.TEXT_PRIMARY
+        BACKGROUND = Color3.fromRGB(25, 25, 25),
+        SECONDARY_BG = Color3.fromRGB(35, 35, 35),
+        TITLE_BAR = Color3.fromRGB(20, 20, 20),
+        TEXT_PRIMARY = Color3.fromRGB(240, 240, 240),
+        TEXT_SECONDARY = Color3.fromRGB(180, 180, 180),
+        ACCENT = Color3.fromRGB(65, 105, 225),
+        BUTTON_NORMAL = Color3.fromRGB(45, 45, 45),
+        BUTTON_HOVER = Color3.fromRGB(55, 55, 55),
+        CLOSE_BUTTON = Color3.fromRGB(220, 50, 50),
+        TOGGLE_ON = Color3.fromRGB(65, 105, 225),
+        TOGGLE_OFF = Color3.fromRGB(80, 80, 80)
     },
-    CORNER_RADIUS = CUSTOM.LAYOUT.CORNER_RADIUS,
-    MENU_WIDTH = CUSTOM.LAYOUT.MENU_WIDTH,
-    TITLE_HEIGHT = CUSTOM.LAYOUT.TITLE_HEIGHT,
-    SIZES = CUSTOM.SIZES,
+    CORNER_RADIUS = 4,
+    MENU_WIDTH = 300,
+    TITLE_HEIGHT = 32,
+    BUTTON_HEIGHT = 36,
+    PADDING = 8,
+    FONT_SIZE = 14,
+    ANIMATION = {
+        TWEEN_SPEED = 0.2
+    },
     TELEPORT_SPEEDS = {
         {name = "Slow", speed = 100},
         {name = "Normal", speed = 350},
@@ -138,8 +147,15 @@ MainFrame.BorderSizePixel = 0
 MainFrame.ClipsDescendants = true
 MainFrame.Parent = ScreenGui
 
--- Add corner rounding
+-- Add corner rounding and stroke
 local Corner = Instance.new("UICorner")
+Corner.CornerRadius = UDim.new(0, CONFIG.CORNER_RADIUS)
+Corner.Parent = MainFrame
+
+local Stroke = Instance.new("UIStroke")
+Stroke.Color = Color3.fromRGB(50, 50, 50)
+Stroke.Thickness = 1
+Stroke.Parent = MainFrame
 Corner.CornerRadius = UDim.new(0, CONFIG.CORNER_RADIUS)
 Corner.Parent = MainFrame
 
@@ -160,9 +176,13 @@ TitleCorner.Parent = TitleBar
 local TitleText = Instance.new("TextLabel")
 TitleText.Name = "TitleText"
 TitleText.Size = UDim2.new(0, 60, 1, 0)
-TitleText.Position = UDim2.new(0, 10, 0, 0)
+TitleText.Position = UDim2.new(0, CONFIG.PADDING, 0, 0)
 TitleText.BackgroundTransparency = 1
-TitleText.Text = "Core"
+TitleText.Text = "redz Hub"
+TitleText.TextColor3 = CONFIG.THEME.TEXT_PRIMARY
+TitleText.Font = Enum.Font.GothamBold
+TitleText.TextSize = CONFIG.FONT_SIZE
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
 TitleText.TextColor3 = CONFIG.THEME.TEXT_PRIMARY
 TitleText.TextSize = 16
 TitleText.Font = CUSTOM.FONTS.TITLE
@@ -244,7 +264,7 @@ CloseButton.Name = "CloseButton"
 CloseButton.Size = UDim2.new(0, CUSTOM.LAYOUT.BUTTON_HEIGHT, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
 CloseButton.Position = UDim2.new(1, -CUSTOM.LAYOUT.BUTTON_HEIGHT, 0, 0)
 CloseButton.BackgroundTransparency = 1
-CloseButton.Text = "×"
+CloseButton.Text = "X"
 CloseButton.TextColor3 = CONFIG.THEME.CLOSE_BUTTON
 CloseButton.TextSize = 20
 CloseButton.Font = CUSTOM.FONTS.BUTTON
@@ -395,13 +415,13 @@ end
 -- Function to create info label
 local function createInfoLabel(text, posY)
     local label = Instance.new("TextLabel")
-    label.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-    label.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, posY)
+    label.Size = UDim2.new(1, -CONFIG.PADDING*2, 0, CONFIG.BUTTON_HEIGHT)
+    label.Position = UDim2.new(0, CONFIG.PADDING, 0, posY)
     label.BackgroundTransparency = 1
     label.Text = text
-    label.TextColor3 = CUSTOM.THEME.TEXT_SECONDARY
-    label.TextSize = 14
-    label.Font = CUSTOM.FONTS.TEXT
+    label.TextColor3 = CONFIG.THEME.TEXT_SECONDARY
+    label.TextSize = CONFIG.FONT_SIZE
+    label.Font = Enum.Font.GothamMedium
     label.TextXAlignment = Enum.TextXAlignment.Left
     label.Parent = ContentArea
     return label
@@ -818,7 +838,7 @@ local function createDropdownSection(title, items, startY)
         container.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isExpanded and totalHeight or 0))
     end)
     
-    return container, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isExpanded and #items * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2) or 0)
+    return container
 end
 
 -- Create menu buttons
@@ -935,7 +955,7 @@ for _, item in ipairs(MENU_ITEMS) do
             -- Add speed selection dropdown
             local speedContainer = Instance.new("Frame")
             speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-            speedContainer.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
+            speedContainer.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT * 2)
             speedContainer.BackgroundColor3 = CUSTOM.THEME.BUTTON_NORMAL
             speedContainer.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
             speedContainer.Parent = ContentArea
@@ -1022,9 +1042,10 @@ for _, item in ipairs(MENU_ITEMS) do
             end)
             
             -- Create dropdowns for each sea with proper spacing
-            local firstSeaSection, firstHeight = createDropdownSection("First Sea", ISLANDS["First Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
-            local secondSeaSection, secondHeight = createDropdownSection("Second Sea", ISLANDS["Second Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT * 2 + CUSTOM.LAYOUT.PADDING * 2)
-            local thirdSeaSection, thirdHeight = createDropdownSection("Third Sea", ISLANDS["Third Sea"], CUSTOM.LAYOUT.BUTTON_HEIGHT * 3 + CUSTOM.LAYOUT.PADDING * 3)
+            local startY = CUSTOM.LAYOUT.BUTTON_HEIGHT * 3 + CUSTOM.LAYOUT.PADDING
+            local firstSeaSection = createDropdownSection("First Sea", ISLANDS["First Sea"], startY)
+            local secondSeaSection = createDropdownSection("Second Sea", ISLANDS["Second Sea"], startY + CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
+            local thirdSeaSection = createDropdownSection("Third Sea", ISLANDS["Third Sea"], startY + (CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING) * 2)
             
             firstSeaSection.Parent = ContentArea
             secondSeaSection.Parent = ContentArea
