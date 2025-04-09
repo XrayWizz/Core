@@ -740,7 +740,6 @@ local function createDropdownSection(title, items, startY)
     container.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, startY)
     container.BackgroundColor3 = CUSTOM.THEME.BUTTON_NORMAL
     container.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
-    container.AutomaticSize = Enum.AutomaticSize.Y
     container.Parent = ContentArea
     
     local corner = Instance.new("UICorner")
@@ -764,6 +763,14 @@ local function createDropdownSection(title, items, startY)
     itemsContainer.BackgroundTransparency = 0
     itemsContainer.ClipsDescendants = true
     itemsContainer.Parent = container
+    
+    -- Add padding to items container
+    local padding = Instance.new("UIPadding")
+    padding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    padding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    padding.PaddingTop = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    padding.PaddingBottom = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+    padding.Parent = itemsContainer
     
     local itemsPadding = Instance.new("UIPadding")
     itemsPadding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
@@ -800,12 +807,15 @@ local function createDropdownSection(title, items, startY)
         titleButton.Text = (isExpanded and "▼ " or "▶ ") .. title
         
         -- Calculate total height including padding
-        local totalHeight = #items * (CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
+        local totalHeight = listLayout.AbsoluteContentSize.Y
         
         -- Animate container
         TweenService:Create(itemsContainer, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
             Size = UDim2.new(1, 0, 0, isExpanded and totalHeight or 0)
         }):Play()
+        
+        -- Update parent container size
+        container.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isExpanded and totalHeight or 0))
     end)
     
     return container, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isExpanded and #items * (CUSTOM.LAYOUT.BUTTON_HEIGHT + 2) or 0)
@@ -923,21 +933,46 @@ for _, item in ipairs(MENU_ITEMS) do
             toggleContainer.Parent = ContentArea
             
             -- Add speed selection dropdown
-            local speedHeader = createSectionHeader("🚀 Teleport Speed", true)
-            speedHeader.Parent = ContentArea
-            
             local speedContainer = Instance.new("Frame")
-            speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, 0)
-            speedContainer.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
-            speedContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
-            speedContainer.BackgroundTransparency = 0
-            speedContainer.ClipsDescendants = true
-            speedContainer.Parent = speedHeader
+            speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT)
+            speedContainer.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + CUSTOM.LAYOUT.PADDING)
+            speedContainer.BackgroundColor3 = CUSTOM.THEME.BUTTON_NORMAL
+            speedContainer.BackgroundTransparency = CUSTOM.THEME.BUTTON_TRANSPARENCY
+            speedContainer.Parent = ContentArea
+            
+            local corner = Instance.new("UICorner")
+            corner.CornerRadius = UDim.new(0, CUSTOM.LAYOUT.CORNER_RADIUS)
+            corner.Parent = speedContainer
+            
+            local speedButton = Instance.new("TextButton")
+            speedButton.Size = UDim2.new(1, 0, 1, 0)
+            speedButton.BackgroundTransparency = 1
+            speedButton.Text = "▶ Teleport Speed"
+            speedButton.TextColor3 = CUSTOM.THEME.TEXT_PRIMARY
+            speedButton.TextSize = 14
+            speedButton.Font = CUSTOM.FONTS.BUTTON
+            speedButton.TextXAlignment = Enum.TextXAlignment.Left
+            speedButton.Parent = speedContainer
+            
+            local speedItemsContainer = Instance.new("Frame")
+            speedItemsContainer.Size = UDim2.new(1, 0, 0, 0)
+            speedItemsContainer.Position = UDim2.new(0, 0, 1, 0)
+            speedItemsContainer.BackgroundColor3 = CUSTOM.THEME.BACKGROUND
+            speedItemsContainer.BackgroundTransparency = 0
+            speedItemsContainer.ClipsDescendants = true
+            speedItemsContainer.Parent = speedContainer
             
             local speedLayout = Instance.new("UIListLayout")
             speedLayout.SortOrder = Enum.SortOrder.LayoutOrder
             speedLayout.Padding = UDim.new(0, CUSTOM.LAYOUT.PADDING)
-            speedLayout.Parent = speedContainer
+            speedLayout.Parent = speedItemsContainer
+            
+            local speedPadding = Instance.new("UIPadding")
+            speedPadding.PaddingLeft = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+            speedPadding.PaddingRight = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+            speedPadding.PaddingTop = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+            speedPadding.PaddingBottom = UDim.new(0, CUSTOM.LAYOUT.PADDING)
+            speedPadding.Parent = speedItemsContainer
             
             -- Create speed buttons
             for i, speedOption in ipairs(CONFIG.TELEPORT_SPEEDS) do
@@ -949,7 +984,7 @@ for _, item in ipairs(MENU_ITEMS) do
                 button.TextColor3 = CUSTOM.THEME.TEXT_PRIMARY
                 button.Font = CUSTOM.FONTS.BUTTON
                 button.LayoutOrder = i
-                button.Parent = speedContainer
+                button.Parent = speedItemsContainer
                 
                 local corner = Instance.new("UICorner")
                 corner.CornerRadius = UDim.new(0, CUSTOM.LAYOUT.CORNER_RADIUS)
@@ -957,14 +992,34 @@ for _, item in ipairs(MENU_ITEMS) do
                 
                 button.MouseButton1Click:Connect(function()
                     currentTeleportSpeed = speedOption.speed
+                    speedButton.Text = "▼ " .. speedOption.name
                     
                     -- Update button colors
-                    for _, child in ipairs(speedContainer:GetChildren()) do
+                    for _, child in ipairs(speedItemsContainer:GetChildren()) do
                         if child:IsA("TextButton") then
                             child.BackgroundColor3 = speedOption.speed == currentTeleportSpeed and CUSTOM.THEME.ACCENT or CUSTOM.THEME.BUTTON_NORMAL
                         end
                     end
                 end)
+            end
+            
+            -- Toggle speed dropdown
+            local isSpeedExpanded = false
+            speedButton.MouseButton1Click:Connect(function()
+                isSpeedExpanded = not isSpeedExpanded
+                speedButton.Text = (isSpeedExpanded and "▼ " or "▶ ") .. "Teleport Speed"
+                
+                -- Calculate total height including padding
+                local totalHeight = speedLayout.AbsoluteContentSize.Y
+                
+                -- Animate container
+                TweenService:Create(speedItemsContainer, TweenInfo.new(CUSTOM.ANIMATION.TWEEN_SPEED), {
+                    Size = UDim2.new(1, 0, 0, isSpeedExpanded and totalHeight or 0)
+                }):Play()
+                
+                -- Update parent container size
+                speedContainer.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, CUSTOM.LAYOUT.BUTTON_HEIGHT + (isSpeedExpanded and totalHeight or 0))
+            end)
             end
             
             -- Create dropdowns for each sea with proper spacing
