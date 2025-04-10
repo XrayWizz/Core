@@ -92,7 +92,7 @@ local CONFIG = {
 
 -- Menu items with icons
 local MENU_ITEMS = {
-    {layoutOrder = 1, name = "Discord", icon = "🔗"},      -- Discord link
+    {layoutOrder = 1, name = "Overview", icon = "👤"},      -- Profile
     {layoutOrder = 2, name = "Farm", icon = "🌾"},        -- Farm icon
     {layoutOrder = 3, name = "Sea", icon = "🌊"},         -- Sea/Wave
     {layoutOrder = 4, name = "Islands", icon = "🏝️"},     -- Island
@@ -370,6 +370,74 @@ local function createToggleSwitch(text, yPos, defaultState)
     end)
 
     return container, isEnabled
+end
+
+-- Function to create a modern stat display
+local function createStatDisplay(label, value, yPos, icon)
+    local container = Instance.new("Frame")
+    container.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, 40)
+    container.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, yPos)
+    container.BackgroundColor3 = CUSTOM.THEME.BUTTON_NORMAL
+    container.BorderSizePixel = 0
+    container.Parent = ContentArea
+
+    -- Add corner rounding
+    local corner = Instance.new("UICorner")
+    corner.CornerRadius = UDim.new(0, CUSTOM.LAYOUT.CORNER_RADIUS)
+    corner.Parent = container
+
+    -- Add icon if provided
+    if icon then
+        local iconLabel = Instance.new("TextLabel")
+        iconLabel.Size = UDim2.new(0, 24, 0, 24)
+        iconLabel.Position = UDim2.new(0, 8, 0.5, -12)
+        iconLabel.BackgroundTransparency = 1
+        iconLabel.Text = icon
+        iconLabel.TextSize = 16
+        iconLabel.Font = CUSTOM.FONTS.TEXT
+        iconLabel.Parent = container
+    end
+
+    -- Create label
+    local labelText = Instance.new("TextLabel")
+    labelText.Size = UDim2.new(0.5, -20, 1, 0)
+    labelText.Position = UDim2.new(0, icon and 40 or 10, 0, 0)
+    labelText.BackgroundTransparency = 1
+    labelText.Text = label
+    labelText.TextColor3 = CUSTOM.THEME.TEXT_SECONDARY
+    labelText.TextXAlignment = Enum.TextXAlignment.Left
+    labelText.Font = CUSTOM.FONTS.TEXT
+    labelText.TextSize = 14
+    labelText.Parent = container
+
+    -- Create value
+    local valueText = Instance.new("TextLabel")
+    valueText.Size = UDim2.new(0.5, -20, 1, 0)
+    valueText.Position = UDim2.new(0.5, 10, 0, 0)
+    valueText.BackgroundTransparency = 1
+    valueText.Text = tostring(value)
+    valueText.TextColor3 = CUSTOM.THEME.TEXT_PRIMARY
+    valueText.TextXAlignment = Enum.TextXAlignment.Right
+    valueText.Font = CUSTOM.FONTS.TEXT
+    valueText.TextSize = 14
+    valueText.Parent = container
+
+    return container, valueText
+end
+
+-- Function to create a category header
+local function createCategoryHeader(title, yPos)
+    local header = Instance.new("TextLabel")
+    header.Size = UDim2.new(1, -CUSTOM.LAYOUT.PADDING*2, 0, 30)
+    header.Position = UDim2.new(0, CUSTOM.LAYOUT.PADDING, 0, yPos)
+    header.BackgroundTransparency = 1
+    header.Text = title
+    header.TextColor3 = CUSTOM.THEME.ACCENT
+    header.TextXAlignment = Enum.TextXAlignment.Left
+    header.Font = CUSTOM.FONTS.CATEGORY
+    header.TextSize = 16
+    header.Parent = ContentArea
+    return header
 end
 
 -- Function to create section header
@@ -927,13 +995,42 @@ for _, item in ipairs(MENU_ITEMS) do
             thirdSeaSection.Parent = ContentArea
             
         elseif item.name == "Overview" then
-            local header = createSectionHeader("Player Info")
-            header.Parent = ContentArea
+            clearContentArea()
             
+            -- Player Basic Info
+            createCategoryHeader("Player Information", 10)
             local player = game.Players.LocalPlayer
-            createInfoLabel("Username: " .. player.Name, 50)
-            createInfoLabel("Display Name: " .. player.DisplayName, 90)
-            createInfoLabel("Account Age: " .. player.AccountAge .. " days", 130)
+            createStatDisplay("Username", player.Name, 50, "👤")
+            createStatDisplay("Display Name", player.DisplayName, 100, "📛")
+            createStatDisplay("Account Age", player.AccountAge .. " days", 150, "📅")
+            createStatDisplay("Level", "2,600", 200, "⭐")
+            
+            -- Currency Section
+            createCategoryHeader("Currency", 260)
+            createStatDisplay("Beli", "$112,981,674", 300, "💰")
+            createStatDisplay("Fragments", "41,000", 350, "💎")
+            createStatDisplay("Bones", "1,523", 400, "🦴")
+            
+            -- Stats Section
+            createCategoryHeader("Combat Stats", 460)
+            createStatDisplay("Melee", "2400", 500, "👊")
+            createStatDisplay("Defense", "2400", 550, "🛡️")
+            createStatDisplay("Sword", "2400", 600, "⚔️")
+            createStatDisplay("Gun", "2400", 650, "🔫")
+            createStatDisplay("Devil Fruit", "2400", 700, "🍎")
+            
+            -- Raid/Event Stats
+            createCategoryHeader("Progress", 760)
+            createStatDisplay("Raids Completed", "157", 800, "🏰")
+            createStatDisplay("Pirates Defeated", "1,234", 850, "☠️")
+            createStatDisplay("Boss Kills", "89", 900, "👑")
+            
+            -- Additional Info
+            createCategoryHeader("Current Status", 960)
+            createStatDisplay("Location", "Third Sea", 1000, "🗺️")
+            createStatDisplay("Devil Fruit", "Dragon", 1050, "🐉")
+            createStatDisplay("Fighting Style", "Superhuman", 1100, "🥋")
+            createStatDisplay("Sword Style", "Dragon Trident", 1150, "🗡️")
             
         elseif item.name == "Settings" then
             local header = createSectionHeader("UI Settings")
