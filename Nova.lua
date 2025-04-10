@@ -8,7 +8,7 @@ screenGui.Name = "ModernBloxFruitsUI"
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 450, 0, 350)
 mainFrame.Position = UDim2.new(0.5, -225, 0.5, -175)
-mainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 25)
+mainFrame.BackgroundColor3 = Color3.fromRGB(50, 55, 65) -- Lighter base
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
@@ -18,22 +18,22 @@ mainCorner.Parent = mainFrame
 
 local mainGradient = Instance.new("UIGradient")
 mainGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 25)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(35, 35, 40))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 55, 65)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(70, 75, 85))
 }
 mainGradient.Rotation = 45
 mainGradient.Parent = mainFrame
 
 local mainStroke = Instance.new("UIStroke")
 mainStroke.Thickness = 2
-mainStroke.Color = Color3.fromRGB(50, 50, 60)
-mainStroke.Transparency = 0.8
+mainStroke.Color = Color3.fromRGB(90, 95, 105)
+mainStroke.Transparency = 0.6
 mainStroke.Parent = mainFrame
 
 -- Title Bar
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1, 0, 0, 40)
-titleBar.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
+titleBar.BackgroundColor3 = Color3.fromRGB(40, 45, 55) -- Brighter title
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 
@@ -43,8 +43,8 @@ titleCorner.Parent = titleBar
 
 local titleGradient = Instance.new("UIGradient")
 titleGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(15, 15, 20)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(30, 30, 35))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 45, 55)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 65, 75))
 }
 titleGradient.Parent = titleBar
 
@@ -53,7 +53,7 @@ titleLabel.Size = UDim2.new(0.9, -40, 1, 0)
 titleLabel.Position = UDim2.new(0, 15, 0, 0)
 titleLabel.BackgroundTransparency = 1
 titleLabel.Text = "Blox Fruits Dashboard"
-titleLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+titleLabel.TextColor3 = Color3.fromRGB(230, 235, 255) -- Brighter text
 titleLabel.TextSize = 20
 titleLabel.Font = Enum.Font.GothamBold
 titleLabel.Parent = titleBar
@@ -61,8 +61,8 @@ titleLabel.Parent = titleBar
 local closeButton = Instance.new("TextButton")
 closeButton.Size = UDim2.new(0, 40, 0, 40)
 closeButton.Position = UDim2.new(1, -40, 0, 0)
-closeButton.BackgroundColor3 = Color3.fromRGB(255, 60, 60)
-closeButton.Text = "✕"
+closeButton.BackgroundColor3 = Color3.fromRGB(255, 80, 80) -- Vibrant red
+closeButton.Text = "X" -- Simple, reliable "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.TextSize = 20
 closeButton.Font = Enum.Font.GothamBold
@@ -77,7 +77,7 @@ closeCorner.Parent = closeButton
 local sideMenu = Instance.new("Frame")
 sideMenu.Size = UDim2.new(0, 120, 1, -40)
 sideMenu.Position = UDim2.new(0, 0, 0, 40)
-sideMenu.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+sideMenu.BackgroundColor3 = Color3.fromRGB(60, 65, 75) -- Lighter side
 sideMenu.BorderSizePixel = 0
 sideMenu.Parent = mainFrame
 
@@ -87,8 +87,8 @@ sideCorner.Parent = sideMenu
 
 local sideGradient = Instance.new("UIGradient")
 sideGradient.Color = ColorSequence.new{
-    ColorSequenceKeypoint.new(0, Color3.fromRGB(25, 25, 30)),
-    ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 40, 45))
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 65, 75)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 85, 95))
 }
 sideGradient.Rotation = 90
 sideGradient.Parent = sideMenu
@@ -97,12 +97,12 @@ sideGradient.Parent = sideMenu
 local contentArea = Instance.new("ScrollingFrame")
 contentArea.Size = UDim2.new(0, 330, 1, -50)
 contentArea.Position = UDim2.new(0, 120, 0, 45)
-contentArea.BackgroundColor3 = Color3.fromRGB(30, 30, 35)
-contentArea.BackgroundTransparency = 0.2
+contentArea.BackgroundColor3 = Color3.fromRGB(65, 70, 80)
+contentArea.BackgroundTransparency = 0.1 -- Less transparent
 contentArea.BorderSizePixel = 0
-contentArea.CanvasSize = UDim2.new(0, 0, 0, 0) -- Auto-adjusts later
+contentArea.CanvasSize = UDim2.new(0, 0, 0, 0)
 contentArea.ScrollBarThickness = 4
-contentArea.ScrollBarImageColor3 = Color3.fromRGB(100, 100, 150)
+contentArea.ScrollBarImageColor3 = Color3.fromRGB(120, 125, 135)
 contentArea.Parent = mainFrame
 
 local contentCorner = Instance.new("UICorner")
@@ -111,8 +111,8 @@ contentCorner.Parent = contentArea
 
 local contentStroke = Instance.new("UIStroke")
 contentStroke.Thickness = 1
-contentStroke.Color = Color3.fromRGB(60, 60, 70)
-contentStroke.Transparency = 0.7
+contentStroke.Color = Color3.fromRGB(100, 105, 115)
+contentStroke.Transparency = 0.5
 contentStroke.Parent = contentArea
 
 -- Player Data Function
@@ -127,7 +127,7 @@ local function getPlayerData()
     local fragments = data:FindFirstChild("Fragments") and data.Fragments.Value or "N/A"
     local fruit = data:FindFirstChild("DevilFruit") and data.DevilFruit.Value or "None"
     local race = data:FindFirstChild("Race") and data.Race.Value or "N/A"
-    local bounty = data:FindFirstChild("Bounty") and data.Bounty.Value or "N/A" -- Assuming Bounty/Honor
+    local bounty = data:FindFirstChild("Bounty") and data.Bounty.Value or "N/A"
     local fightingStyle = data:FindFirstChild("FightingStyle") and data.FightingStyle.Value or "N/A"
     local sword = data:FindFirstChild("Sword") and data.Sword.Value or "N/A"
 
@@ -167,7 +167,7 @@ local buttons = {
         infoLabel.Size = UDim2.new(1, -20, 0, 200)
         infoLabel.Position = UDim2.new(0, 10, 0, 10)
         infoLabel.BackgroundTransparency = 1
-        infoLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+        infoLabel.TextColor3 = Color3.fromRGB(240, 245, 255) -- Brighter text
         infoLabel.TextSize = 16
         infoLabel.Font = Enum.Font.Gotham
         infoLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -191,7 +191,7 @@ local buttons = {
         statsLabel.Size = UDim2.new(1, -20, 0, 150)
         statsLabel.Position = UDim2.new(0, 10, 0, 10)
         statsLabel.BackgroundTransparency = 1
-        statsLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+        statsLabel.TextColor3 = Color3.fromRGB(240, 245, 255)
         statsLabel.TextSize = 16
         statsLabel.Font = Enum.Font.Gotham
         statsLabel.TextXAlignment = Enum.TextXAlignment.Left
@@ -215,7 +215,7 @@ local buttons = {
         invLabel.Position = UDim2.new(0, 10, 0, 10)
         invLabel.BackgroundTransparency = 1
         invLabel.Text = "Inventory Coming Soon!"
-        invLabel.TextColor3 = Color3.fromRGB(220, 220, 255)
+        invLabel.TextColor3 = Color3.fromRGB(240, 245, 255)
         invLabel.TextSize = 16
         invLabel.Font = Enum.Font.Gotham
         invLabel.Parent = contentArea
@@ -229,9 +229,9 @@ for i, btnData in ipairs(buttons) do
     local button = Instance.new("TextButton")
     button.Size = UDim2.new(1, -10, 0, 35)
     button.Position = UDim2.new(0, 5, 0, (i-1) * 40 + 10)
-    button.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    button.BackgroundColor3 = Color3.fromRGB(80, 85, 95) -- Lighter buttons
     button.Text = btnData.Name
-    button.TextColor3 = Color3.fromRGB(200, 200, 255)
+    button.TextColor3 = Color3.fromRGB(230, 235, 255)
     button.TextSize = 14
     button.Font = Enum.Font.GothamSemibold
     button.BorderSizePixel = 0
@@ -243,21 +243,21 @@ for i, btnData in ipairs(buttons) do
 
     local btnGradient = Instance.new("UIGradient")
     btnGradient.Color = ColorSequence.new{
-        ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 40, 50)),
-        ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 60, 70))
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 85, 95)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 105, 115))
     }
     btnGradient.Parent = button
 
     button.MouseEnter:Connect(function()
         btnGradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(60, 60, 80)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(80, 80, 100))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(100, 105, 115)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(120, 125, 135))
         }
     end)
     button.MouseLeave:Connect(function()
         btnGradient.Color = ColorSequence.new{
-            ColorSequenceKeypoint.new(0, Color3.fromRGB(40, 40, 50)),
-            ColorSequenceKeypoint.new(1, Color3.fromRGB(60, 60, 70))
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(80, 85, 95)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(100, 105, 115))
         }
     end)
 
@@ -267,7 +267,7 @@ end
 -- Context Menu
 local contextMenu = Instance.new("Frame")
 contextMenu.Size = UDim2.new(0, 160, 0, #buttons * 35)
-contextMenu.BackgroundColor3 = Color3.fromRGB(25, 25, 30)
+contextMenu.BackgroundColor3 = Color3.fromRGB(60, 65, 75)
 contextMenu.BackgroundTransparency = 0.1
 contextMenu.BorderSizePixel = 0
 contextMenu.Visible = false
@@ -279,17 +279,17 @@ contextCorner.Parent = contextMenu
 
 local contextStroke = Instance.new("UIStroke")
 contextStroke.Thickness = 2
-contextStroke.Color = Color3.fromRGB(50, 50, 60)
-contextStroke.Transparency = 0.8
+contextStroke.Color = Color3.fromRGB(90, 95, 105)
+contextStroke.Transparency = 0.6
 contextStroke.Parent = contextMenu
 
 for i, btnData in ipairs(buttons) do
     local contextButton = Instance.new("TextButton")
     contextButton.Size = UDim2.new(1, -10, 0, 30)
     contextButton.Position = UDim2.new(0, 5, 0, (i-1) * 35 + 5)
-    contextButton.BackgroundColor3 = Color3.fromRGB(40, 40, 50)
+    contextButton.BackgroundColor3 = Color3.fromRGB(80, 85, 95)
     contextButton.Text = btnData.Name
-    contextButton.TextColor3 = Color3.fromRGB(200, 200, 255)
+    contextButton.TextColor3 = Color3.fromRGB(230, 235, 255)
     contextButton.TextSize = 14
     contextButton.Font = Enum.Font.GothamSemibold
     contextButton.BorderSizePixel = 0
