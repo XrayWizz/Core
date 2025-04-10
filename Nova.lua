@@ -12,12 +12,32 @@ mainFrame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 
+local mainCorner = Instance.new("UICorner")
+mainCorner.CornerRadius = UDim.new(0, 10)
+mainCorner.Parent = mainFrame
+
+local mainStroke = Instance.new("UIStroke")
+mainStroke.Thickness = 1
+mainStroke.Color = Color3.fromRGB(50, 50, 50)
+mainStroke.Parent = mainFrame
+
 -- Title Bar
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1, 0, 0, 30)
 titleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
+
+local titleCorner = Instance.new("UICorner")
+titleCorner.CornerRadius = UDim.new(0, 10)
+titleCorner.Parent = titleBar
+
+local titleGradient = Instance.new("UIGradient")
+titleGradient.Color = ColorSequence.new{
+    ColorSequenceKeypoint.new(0, Color3.fromRGB(20, 20, 20)),
+    ColorSequenceKeypoint.new(1, Color3.fromRGB(40, 40, 40))
+}
+titleGradient.Parent = titleBar
 
 local titleLabel = Instance.new("TextLabel")
 titleLabel.Size = UDim2.new(0.9, 0, 1, 0)
@@ -37,7 +57,12 @@ closeButton.Text = "X"
 closeButton.TextColor3 = Color3.fromRGB(255, 255, 255)
 closeButton.TextSize = 18
 closeButton.Font = Enum.Font.SourceSansBold
+closeButton.BorderSizePixel = 0
 closeButton.Parent = titleBar
+
+local closeCorner = Instance.new("UICorner")
+closeCorner.CornerRadius = UDim.new(0, 10)
+closeCorner.Parent = closeButton
 
 -- Side Menu
 local sideMenu = Instance.new("Frame")
@@ -47,6 +72,10 @@ sideMenu.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
 sideMenu.BorderSizePixel = 0
 sideMenu.Parent = mainFrame
 
+local sideCorner = Instance.new("UICorner")
+sideCorner.CornerRadius = UDim.new(0, 10)
+sideCorner.Parent = sideMenu
+
 -- Content Area
 local contentArea = Instance.new("Frame")
 contentArea.Size = UDim2.new(0, 300, 1, -30)
@@ -55,9 +84,13 @@ contentArea.BackgroundColor3 = Color3.fromRGB(35, 35, 35)
 contentArea.BorderSizePixel = 0
 contentArea.Parent = mainFrame
 
+local contentCorner = Instance.new("UICorner")
+contentCorner.CornerRadius = UDim.new(0, 10)
+contentCorner.Parent = contentArea
+
 -- Function to Get Player Data (Real-Time)
 local function getPlayerData()
-    local data = player:WaitForChild("Data", 5) -- Wait for Data folder, timeout after 5s
+    local data = player:WaitForChild("Data", 5)
     if not data then
         return "Data not found!"
     end
@@ -79,7 +112,7 @@ local function getPlayerData()
     )
 end
 
--- Side Menu Buttons
+-- Side Menu Buttons (Compact Design)
 local buttons = {
     {Name = "Overview", Content = function()
         for _, child in pairs(contentArea:GetChildren()) do
@@ -97,9 +130,8 @@ local buttons = {
         infoLabel.TextYAlignment = Enum.TextYAlignment.Top
         infoLabel.Parent = contentArea
 
-        -- Real-time update loop
         RunService.RenderStepped:Connect(function()
-            if infoLabel.Parent then -- Check if label still exists
+            if infoLabel.Parent then
                 infoLabel.Text = getPlayerData()
             end
         end)
@@ -134,24 +166,41 @@ local buttons = {
     end}
 }
 
--- Create Side Menu Buttons
+-- Create Side Menu Buttons (Compact and Modern)
 for i, btnData in ipairs(buttons) do
     local button = Instance.new("TextButton")
-    button.Size = UDim2.new(1, 0, 0, 40)
-    button.Position = UDim2.new(0, 0, 0, (i-1) * 40)
+    button.Size = UDim2.new(1, -10, 0, 30) -- Reduced height for compactness
+    button.Position = UDim2.new(0, 5, 0, (i-1) * 32 + 5) -- Tighter spacing
     button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
     button.Text = btnData.Name
     button.TextColor3 = Color3.fromRGB(255, 255, 255)
-    button.TextSize = 16
-    button.Font = Enum.Font.SourceSans
+    button.TextSize = 14 -- Smaller text for modern feel
+    button.Font = Enum.Font.SourceSansSemibold
     button.BorderSizePixel = 0
     button.Parent = sideMenu
 
+    local btnCorner = Instance.new("UICorner")
+    btnCorner.CornerRadius = UDim.new(0, 8)
+    btnCorner.Parent = button
+
+    local btnGradient = Instance.new("UIGradient")
+    btnGradient.Color = ColorSequence.new{
+        ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 50)),
+        ColorSequenceKeypoint.new(1, Color3.fromRGB(70, 70, 70))
+    }
+    btnGradient.Parent = button
+
     button.MouseEnter:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(70, 70, 70)
+        btnGradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(70, 70, 70)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(90, 90, 90))
+        }
     end)
     button.MouseLeave:Connect(function()
-        button.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+        btnGradient.Color = ColorSequence.new{
+            ColorSequenceKeypoint.new(0, Color3.fromRGB(50, 50, 50)),
+            ColorSequenceKeypoint.new(1, Color3.fromRGB(70, 70, 70))
+        }
     end)
 
     button.MouseButton1Click:Connect(btnData.Content)
@@ -165,6 +214,15 @@ contextMenu.BorderSizePixel = 0
 contextMenu.Visible = false
 contextMenu.Parent = screenGui
 
+local contextCorner = Instance.new("UICorner")
+contextCorner.CornerRadius = UDim.new(0, 10)
+contextCorner.Parent = contextMenu
+
+local contextStroke = Instance.new("UIStroke")
+contextStroke.Thickness = 1
+contextStroke.Color = Color3.fromRGB(60, 60, 60)
+contextStroke.Parent = contextMenu
+
 for i, btnData in ipairs(buttons) do
     local contextButton = Instance.new("TextButton")
     contextButton.Size = UDim2.new(1, 0, 0, 30)
@@ -173,9 +231,13 @@ for i, btnData in ipairs(buttons) do
     contextButton.Text = btnData.Name
     contextButton.TextColor3 = Color3.fromRGB(255, 255, 255)
     contextButton.TextSize = 14
-    contextButton.Font = Enum.Font.SourceSans
+    contextButton.Font = Enum.Font.SourceSansSemibold
     contextButton.BorderSizePixel = 0
     contextButton.Parent = contextMenu
+
+    local ctxBtnCorner = Instance.new("UICorner")
+    ctxBtnCorner.CornerRadius = UDim.new(0, 8)
+    ctxBtnCorner.Parent = contextButton
 
     contextButton.MouseButton1Click:Connect(function()
         btnData.Content()
