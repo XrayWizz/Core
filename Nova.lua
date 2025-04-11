@@ -9,7 +9,7 @@ screenGui.Name = "MaterialBloxFruitsUI"
 local mainFrame = Instance.new("Frame")
 mainFrame.Size = UDim2.new(0, 400, 0, 300)
 mainFrame.Position = UDim2.new(0.5, -200, 0.5, -150)
-mainFrame.BackgroundColor3 = Color3.fromRGB(250, 250, 250) -- Light background
+mainFrame.BackgroundColor3 = Color3.fromRGB(250, 250, 250)
 mainFrame.BorderSizePixel = 0
 mainFrame.Parent = screenGui
 mainFrame.Visible = true
@@ -27,7 +27,7 @@ mainStroke.Parent = mainFrame
 -- Title Bar (App Bar)
 local titleBar = Instance.new("Frame")
 titleBar.Size = UDim2.new(1, 0, 0, 48)
-titleBar.BackgroundColor3 = Color3.fromRGB(0, 137, 123) -- Vibrant teal
+titleBar.BackgroundColor3 = Color3.fromRGB(0, 137, 123)
 titleBar.BorderSizePixel = 0
 titleBar.Parent = mainFrame
 
@@ -163,7 +163,7 @@ local function getPlayerData()
     local sword = data:FindFirstChild("Sword") and data.Sword.Value or "N/A"
 
     return string.format(
-        "Player: %s\nLevel: %s\nFruit: %s\nBeli: %s\nFragments: %s\nRace: %s\nBounty/Honor: दें
+        "Player: %s\nLevel: %s\nFruit: %s\nBeli: %s\nFragments: %s\nRace: %s\nBounty/Honor: %s\nFighting Style: %s\nSword: %s",
         player.Name, tostring(level), fruit, tostring(beli), tostring(fragments), race, tostring(bounty), fightingStyle, sword
     )
 end
